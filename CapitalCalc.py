@@ -86,14 +86,14 @@ class StorageCalculator(QWidget):
 
         # Widgets
         select_recinto = self.create_combobox_recinto("SELECIONE O RECINTO")
-        valor_cif = self.create_lineedit_CIF("VALOR DE CIF EM R$")
+        self.valor_cif = self.create_lineedit_CIF("VALOR DE CIF EM R$")
         select_tipo_mercadoria = self.create_combobox_mercadoria("SELECIONE O TIPO DA MERCADORIA")
         self.entrada_container = self.create_dateedit()
         self.saida_container = self.create_dateedit()
         self.periodo_armazenagem = self.create_combobox_armazenagem("PERÍODO DE ARMAZENAGEM")
         custos = self.create_combobox("CUSTOS")
         gerar_simulacao = self.create_button("GERAR SIMULAÇÃO", is_action_button=True)
-        salvar_pdf = self.create_button("GERAR PDF", is_action_button=True)
+        # salvar_pdf = self.create_button("GERAR PDF", is_action_button=True)
 
         # Layout de parâmetros de simulação
         simulacao_group = QLabel("SIMULAÇÃO DA ARMAZENAGEM")
@@ -101,15 +101,28 @@ class StorageCalculator(QWidget):
 
         self.result_label = QLabel("")
         self.result_label.setFont(QFont("Arial", 16))
-        self.result_label.setStyleSheet("color: white; background-color: rgba(255, 255, 255, 0.1); padding: 10px;")
-        self.result_label.setAlignment(Qt.AlignCenter)
+        self.result_label.setStyleSheet("color: white; background-color: rgba(255, 255, 255, 0.0); padding: 10px;")
         self.result_label.setVisible(False)  # Oculta inicialmente
 
         self.result_label_levante = QLabel("")
         self.result_label_levante.setFont(QFont("Arial", 16))
-        self.result_label_levante.setStyleSheet("color: white; background-color: rgba(255, 255, 255, 0.1); padding: 10px;")
-        self.result_label_levante.setAlignment(Qt.AlignCenter)
+        self.result_label_levante.setStyleSheet("color: white; background-color: rgba(255, 255, 255, 0.0); padding: 10px;")
         self.result_label_levante.setVisible(False)  # Oculta inicialmente
+
+        self.result_label_armazenagem = QLabel("")
+        self.result_label_armazenagem.setFont(QFont("Arial", 16))
+        self.result_label_armazenagem.setStyleSheet("color: white; background-color: rgba(255, 255, 255, 0.0); padding: 10px;")
+        self.result_label_armazenagem.setVisible(False)  # Oculta inicialmente
+
+        self.result_label_energia = QLabel("")
+        self.result_label_energia.setFont(QFont("Arial", 16))
+        self.result_label_energia.setStyleSheet("color: white; background-color: rgba(255, 255, 255, 0.0); padding: 10px;")
+        self.result_label_energia.setVisible(False)  # Oculta inicialmente
+
+        self.result_label_total = QLabel("")
+        self.result_label_total.setFont(QFont("Arial", 16))
+        self.result_label_total.setStyleSheet("color: white; background-color: rgba(255, 255, 255, 0.0); padding: 10px;")
+        self.result_label_total.setVisible(False)  # Oculta inicialmente
 
         # Layout de datas
         date_layout = QHBoxLayout()
@@ -126,13 +139,13 @@ class StorageCalculator(QWidget):
 
         # Ajuste para os botões se estenderem
         gerar_simulacao.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        salvar_pdf.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        # salvar_pdf.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         action_buttons_layout = QHBoxLayout()
         action_buttons_layout.addSpacerItem(QSpacerItem(0, 10, QSizePolicy.Minimum, QSizePolicy.Fixed))
         action_buttons_layout.addWidget(gerar_simulacao)
         action_buttons_layout.addSpacerItem(QSpacerItem(0, 10, QSizePolicy.Minimum, QSizePolicy.Fixed))
-        action_buttons_layout.addWidget(salvar_pdf)
+        # action_buttons_layout.addWidget(salvar_pdf)
         action_buttons_layout.addSpacerItem(QSpacerItem(0, 10, QSizePolicy.Minimum, QSizePolicy.Fixed))
         action_buttons_layout.addSpacerItem(QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding))
 
@@ -142,7 +155,7 @@ class StorageCalculator(QWidget):
         left_layout.addWidget(select_recinto)
         left_layout.addSpacerItem(QSpacerItem(0, 10, QSizePolicy.Minimum, QSizePolicy.Fixed))
         # left_layout.addWidget(valor_cif_label)
-        left_layout.addWidget(valor_cif)
+        left_layout.addWidget(self.valor_cif)
         left_layout.addSpacerItem(QSpacerItem(0, 10, QSizePolicy.Minimum, QSizePolicy.Fixed))
         # left_layout.addWidget(select_tipo_mercadoria_label)
         left_layout.addWidget(select_tipo_mercadoria)
@@ -168,13 +181,17 @@ class StorageCalculator(QWidget):
 
         # Layout da direita (right_layout)
         right_layout = QVBoxLayout()
+        right_layout.setContentsMargins(0, 25, 0, 0)  # Ajuste o valor 50 para aumentar/reduzir o espaço
         right_layout.addWidget(simulacao_group)
         result_layout = QVBoxLayout()
         result_layout.addWidget(self.result_label)
         result_layout.addWidget(self.result_label_levante)
-        result_layout.setContentsMargins(0, 70, 0, 0)  # Ajuste o valor 50 para aumentar/reduzir o espaço
+        result_layout.addWidget(self.result_label_armazenagem)
+        result_layout.addWidget(self.result_label_energia)
+        result_layout.addWidget(self.result_label_total)
+        result_layout.setContentsMargins(0, 20, 0, 0)  # Ajuste o valor 50 para aumentar/reduzir o espaço
         right_layout.addLayout(result_layout)
-        right_layout.addSpacerItem(QSpacerItem(0, 580, QSizePolicy.Expanding, QSizePolicy.Minimum))  # Espaçador à esquerda
+        right_layout.addSpacerItem(QSpacerItem(0, 620, QSizePolicy.Expanding, QSizePolicy.Minimum))  # Espaçador à esquerda
 
         # Adição dos layouts ao layout de conteúdo com espaçamento
         content_layout.addSpacerItem(QSpacerItem(485, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))  # Espaçador à esquerda
@@ -198,28 +215,37 @@ class StorageCalculator(QWidget):
     def calculate_simulation(self):
         recinto = self.select_recinto.currentText()
         tipo_mercadoria = self.select_tipo_mercadoria.currentText()
-        periodo_armazenagem = self.create_combobox_armazenagem.currentText()
+        periodo_armazenagem = self.periodo_armazenagem.currentText()  # Corrigido para acessar o combo box corretamente
+        valor_do_CIF = self.valor_cif.text().replace("R$", "").replace(".", "").replace(",", ".").strip()  # Presumindo que você tem um campo para o valor do CIF
+
+        try:
+            valor_do_CIF = float(valor_do_CIF)
+        except ValueError:
+            self.result_label.setText("Campos não preenchidos, verifique!")
+            self.result_label.setVisible(True)
+            return
 
         # Verificar se as condições gerais são atendidas
-        if recinto == "PORTONAVE" and tipo_mercadoria == "NORMAL" and periodo_armazenagem == "1º período":
+        if recinto == "PORTONAVE" and tipo_mercadoria == "NORMAL":
+            # Obter a diferença de dias
+            difference = self.entrada_container.date().daysTo(self.saida_container.date())
             valor_total = 0  # Inicializar o valor total para serviços extras
             valor_total_levante = 0  # Inicializar o valor total para levantes
+            valor_total_armazenagem = 0  # Inicializar o valor total para armazenagem
+            valor_total_geral = 0
 
-            # Iterar sobre todos os tipos e quantidades de contêineres adicionados
+            # Calcular os serviços extras multiplicando pela quantidade
             for i in range(len(self.quantidade_container_list)):
                 tipo_conteiner = self.tipo_container_list[i].currentText()
                 quantidade_container = self.quantidade_container_list[i]
 
-                # Apenas continuar se o tipo de contêiner for válido
                 try:
                     quantidade = int(quantidade_container.text())
                 except ValueError:
                     quantidade = 1  # Usar valor padrão de 1 se não for um número válido
 
-                # Calcular os serviços extras multiplicando pela quantidade
                 valor_total += sum(self.selected_options_values.values()) * quantidade
 
-                # Cálculo específico para o tipo de contêiner no valor_total_levante
                 if tipo_conteiner == "Normal":
                     valor_total_levante += 375.99 * quantidade
                 elif tipo_conteiner == "Open Top":
@@ -227,22 +253,462 @@ class StorageCalculator(QWidget):
                 elif tipo_conteiner == "Flat Rack":
                     valor_total_levante += 967.00 * quantidade
                 elif tipo_conteiner == "Carga solta":
-                    valor_total_levante += 0.00 * quantidade  # Atualização para Carga solta
+                    valor_total_levante += 0.00 * quantidade
 
-            # Exibir o valor calculado para os serviços extras
-            self.result_label.setText(f"Serviços extras: R$ {valor_total:.2f}")
-            self.result_label.setVisible(True)
+                # Cálculo do tempo de armazenagem
+                if periodo_armazenagem == "1º período":
+                    if difference == 7:
+                        tarifa = max(0.0022 * valor_do_CIF, 393.00)
+                        valor_total_armazenagem += tarifa * quantidade
+                elif periodo_armazenagem == "2º período":
+                    if 8 <= difference <= 14:
+                        tarifa_dia_7 = max(0.0022 * valor_do_CIF, 393.00)
+                        tarifa_dia_8 = max(0.0028 * valor_do_CIF, 235.99)
+                        valor_total_armazenagem += (
+                            (tarifa_dia_7 * quantidade) +
+                            (tarifa_dia_8 * (difference - 8 + 1)) * quantidade
+                        )
+                elif periodo_armazenagem == "3º período":
+                    if difference >= 15:
+                        tarifa_dia_7 = max(0.0022 * valor_do_CIF, 393.00)
+                        tarifa_dia_8 = max(0.0028 * valor_do_CIF, 235.99)
+                        tarifa_dia_15 = max(0.0040 * valor_do_CIF, 346.00)
+                        valor_total_armazenagem += (
+                            (tarifa_dia_7) +                  # Tarifa do 7º dia
+                            (tarifa_dia_8 * 7) +              # Tarifa dos dias 8 a 14
+                            (tarifa_dia_15 * (difference - 14)) * quantidade  # Tarifa a partir do 15º dia
+                        )
+                elif periodo_armazenagem == "4º período":
+                    if difference >= 29:
+                        tarifa_dia_7 = max(0.0022 * valor_do_CIF, 393.00)
+                        tarifa_dia_8 = max(0.0028 * valor_do_CIF, 235.99)
+                        tarifa_dia_15 = max(0.0040 * valor_do_CIF, 346.00)
+                        tarifa_dia_30 = max(0.0044 * valor_do_CIF, 437.00)
+                        valor_total_armazenagem += (
+                            (tarifa_dia_7) +                  # Tarifa do 7º dia
+                            (tarifa_dia_8 * 7) +              # Tarifa dos dias 8 a 14
+                            (tarifa_dia_15 * 15) +            # Tarifa a partir do 15º dia
+                            (tarifa_dia_30 * (difference - 28)) * quantidade  # Tarifa a partir do 29º dia
+                        )
+                
+                valor_total_geral += valor_total + valor_total_levante + valor_total_armazenagem
 
-            # Exibir o valor calculado para o tipo de contêiner (levante)
-            if not hasattr(self, 'result_label_levante'):
-                self.result_label_levante = QLabel()  # Certifique-se de que result_label_levante é inicializado
-            self.result_label_levante.setText(f"Levante: R$ {valor_total_levante:.2f}")
-            self.result_label_levante.setVisible(True)
+                # Exibir os resultados
+                self.result_label.setText(f"Serviços extras: R$ {valor_total:.2f}")
+                self.result_label.setVisible(True)
+
+                if not hasattr(self, 'result_label_levante'):
+                    self.result_label_levante = QLabel()  # Inicializa se não existir
+                self.result_label_levante.setText(f"Levante: R$ {valor_total_levante:.2f}")
+                self.result_label_levante.setVisible(True)
+                if not hasattr(self, 'result_label_armazenagem'):
+                    self.result_label_armazenagem = QLabel()  # Inicializa se não existir
+                self.result_label_armazenagem.setText(f"Armazenagem: R$ {valor_total_armazenagem:.2f}")
+                self.result_label_armazenagem.setVisible(True)
+                if not hasattr(self, 'result_label_total'):
+                    self.result_label_total = QLabel()  # Inicializa se não existir
+                self.result_label_total.setText(f"Total de custos: R$ {valor_total_geral:.2f}")
+                self.result_label_total.setVisible(True)
+        
+        elif recinto == "PORTONAVE" and tipo_mercadoria == "IMO":
+            # Obter a diferença de dias
+            difference = self.entrada_container.date().daysTo(self.saida_container.date())
+            valor_total = 0  # Inicializar o valor total para serviços extras
+            valor_extra = 0
+            valor_total_levante = 0  # Inicializar o valor total para levantes
+            valor_extra_levante = 0
+            valor_total_armazenagem = 0  # Inicializar o valor total para armazenagem
+            valor_extra_armazenagem = 0
+            valor_total_geral = 0
+
+            # Calcular os serviços extras multiplicando pela quantidade
+            for i in range(len(self.quantidade_container_list)):
+                tipo_conteiner = self.tipo_container_list[i].currentText()
+                quantidade_container = self.quantidade_container_list[i]
+
+                try:
+                    quantidade = int(quantidade_container.text())
+                except ValueError:
+                    quantidade = 1  # Usar valor padrão de 1 se não for um número válido
+
+                valor_extra += (sum(self.selected_options_values.values()) * quantidade) * 1.5 
+                valor_total += (sum(self.selected_options_values.values()) * quantidade) + valor_extra
+
+                if tipo_conteiner == "Normal":
+                    valor_extra_levante += (375.99 * quantidade) * 1.5
+                    valor_total_levante += (375.99 * quantidade) + valor_extra_levante
+                elif tipo_conteiner == "Open Top":
+                    valor_extra_levante += (967.00 * quantidade) * 1.5
+                    valor_total_levante += (967.00 * quantidade) + valor_extra_levante
+                elif tipo_conteiner == "Flat Rack":
+                    valor_extra_levante += (967.00 * quantidade) * 1.5
+                    valor_total_levante += (967.00 * quantidade) + valor_extra_levante
+                elif tipo_conteiner == "Carga solta":
+                    valor_extra_levante += (0.00 * quantidade) * 1.5
+                    valor_total_levante += (0.00 * quantidade) + valor_extra_levante
+
+                # Cálculo do tempo de armazenagem
+                if periodo_armazenagem == "1º período":
+                    if difference == 7:
+                        tarifa = max(0.0044 * valor_do_CIF, 786.00)
+                        valor_extra_armazenagem += (tarifa * quantidade) * 1.0
+                        valor_total_armazenagem += (tarifa * quantidade) + valor_extra_armazenagem
+                elif periodo_armazenagem == "2º período":
+                    if 8 <= difference <= 14:
+                        tarifa_dia_7 = max(0.0044 * valor_do_CIF, 786.00)
+                        tarifa_dia_8 = max(0.0056 * valor_do_CIF, 471.98)
+                        valor_extra_armazenagem += ((tarifa_dia_7 * quantidade) +(tarifa_dia_8 * (difference - 8 + 1)) * quantidade) * 1.0
+                        valor_total_armazenagem += (
+                            (tarifa_dia_7 * quantidade) +
+                            (tarifa_dia_8 * (difference - 8 + 1)) * quantidade
+                        ) + valor_extra_armazenagem
+                elif periodo_armazenagem == "3º período":
+                    if difference >= 15:
+                        tarifa_dia_7 = max(0.0044 * valor_do_CIF, 786.00)
+                        tarifa_dia_8 = max(0.0056 * valor_do_CIF, 471.98)
+                        tarifa_dia_15 = max(0.0088 * valor_do_CIF, 692.00)
+                        valor_extra_armazenagem += ((tarifa_dia_7) + (tarifa_dia_8 * 7) + (tarifa_dia_15 * (difference - 14)) * quantidade) *1.0
+                        valor_total_armazenagem += (
+                            (tarifa_dia_7) +                  # Tarifa do 7º dia
+                            (tarifa_dia_8 * 7) +              # Tarifa dos dias 8 a 14
+                            (tarifa_dia_15 * (difference - 14)) * quantidade  # Tarifa a partir do 15º dia
+                        ) + valor_extra_armazenagem
+                elif periodo_armazenagem == "4º período":
+                    if difference >= 29:
+                        tarifa_dia_7 = max(0.0044 * valor_do_CIF, 786.00)
+                        tarifa_dia_8 = max(0.0056 * valor_do_CIF, 471.98)
+                        tarifa_dia_15 = max(0.0080 * valor_do_CIF, 692.00)
+                        tarifa_dia_30 = max(0.0088 * valor_do_CIF, 874.00)
+                        valor_extra_armazenagem += ((tarifa_dia_7) + (tarifa_dia_8 * 7) + (tarifa_dia_15 * 15) + (tarifa_dia_30 * (difference - 28)) * quantidade) * 1.0
+                        valor_total_armazenagem += (
+                            (tarifa_dia_7) +                  # Tarifa do 7º dia
+                            (tarifa_dia_8 * 7) +              # Tarifa dos dias 8 a 14
+                            (tarifa_dia_15 * 15) +            # Tarifa a partir do 15º dia
+                            (tarifa_dia_30 * (difference - 28)) * quantidade  # Tarifa a partir do 29º dia
+                        ) + valor_extra_armazenagem
+                
+                valor_total_geral += valor_total + valor_total_levante + valor_total_armazenagem
+
+                # Exibir os resultados
+                self.result_label.setText(f"Serviços extras: R$ {valor_total:.2f}")
+                self.result_label.setVisible(True)
+
+                if not hasattr(self, 'result_label_levante'):
+                    self.result_label_levante = QLabel()  # Inicializa se não existir
+                self.result_label_levante.setText(f"Levante: R$ {valor_total_levante:.2f}")
+                self.result_label_levante.setVisible(True)
+                if not hasattr(self, 'result_label_armazenagem'):
+                    self.result_label_armazenagem = QLabel()  # Inicializa se não existir
+                self.result_label_armazenagem.setText(f"Armazenagem: R$ {valor_total_armazenagem:.2f}")
+                self.result_label_armazenagem.setVisible(True)
+                if not hasattr(self, 'result_label_total'):
+                    self.result_label_total = QLabel()  # Inicializa se não existir
+                self.result_label_total.setText(f"Total de custos: R$ {valor_total_geral:.2f}")
+                self.result_label_total.setVisible(True)
+
+        elif recinto == "PORTONAVE" and tipo_mercadoria == "OVERSIZE":
+            # Obter a diferença de dias
+            difference = self.entrada_container.date().daysTo(self.saida_container.date())
+            valor_total = 0  # Inicializar o valor total para serviços extras
+            valor_extra = 0
+            valor_total_levante = 0  # Inicializar o valor total para levantes
+            valor_extra_levante = 0
+            valor_total_armazenagem = 0  # Inicializar o valor total para armazenagem
+            valor_extra_armazenagem = 0
+            valor_total_geral = 0
+
+            # Calcular os serviços extras multiplicando pela quantidade
+            for i in range(len(self.quantidade_container_list)):
+                tipo_conteiner = self.tipo_container_list[i].currentText()
+                quantidade_container = self.quantidade_container_list[i]
+
+                try:
+                    quantidade = int(quantidade_container.text())
+                except ValueError:
+                    quantidade = 1  # Usar valor padrão de 1 se não for um número válido
+
+                valor_extra += (sum(self.selected_options_values.values()) * quantidade) * 1.5 
+                valor_total += (sum(self.selected_options_values.values()) * quantidade) + valor_extra
+
+                if tipo_conteiner == "Normal":
+                    valor_extra_levante += (375.99 * quantidade) * 1.5
+                    valor_total_levante += (375.99 * quantidade) + valor_extra_levante
+                elif tipo_conteiner == "Open Top":
+                    valor_extra_levante += (967.00 * quantidade) * 1.5
+                    valor_total_levante += (967.00 * quantidade) + valor_extra_levante
+                elif tipo_conteiner == "Flat Rack":
+                    valor_extra_levante += (967.00 * quantidade) * 1.5
+                    valor_total_levante += (967.00 * quantidade) + valor_extra_levante
+                elif tipo_conteiner == "Carga solta":
+                    valor_extra_levante += (0.00 * quantidade) * 1.5
+                    valor_total_levante += (0.00 * quantidade) + valor_extra_levante
+
+                # Cálculo do tempo de armazenagem
+                if periodo_armazenagem == "1º período":
+                    if difference == 7:
+                        tarifa = max(0.0055 * valor_do_CIF, 982.50)
+                        valor_extra_armazenagem += (tarifa * quantidade) * 1.5
+                        valor_total_armazenagem += (tarifa * quantidade) + valor_extra_armazenagem
+                elif periodo_armazenagem == "2º período":
+                    if 8 <= difference <= 14:
+                        tarifa_dia_7 = max(0.0055 * valor_do_CIF, 982.50)
+                        tarifa_dia_8 = max(0.0070 * valor_do_CIF, 589.98)
+                        valor_extra_armazenagem += ((tarifa_dia_7 * quantidade) +(tarifa_dia_8 * (difference - 8 + 1)) * quantidade) * 1.5
+                        valor_total_armazenagem += (
+                            (tarifa_dia_7 * quantidade) +
+                            (tarifa_dia_8 * (difference - 8 + 1)) * quantidade
+                        ) + valor_extra_armazenagem
+                elif periodo_armazenagem == "3º período":
+                    if difference >= 15:
+                        tarifa_dia_7 = max(0.0055 * valor_do_CIF, 982.50)
+                        tarifa_dia_8 = max(0.0070 * valor_do_CIF, 589.98)
+                        tarifa_dia_15 = max(0.0100 * valor_do_CIF, 865.00)
+                        valor_extra_armazenagem += ((tarifa_dia_7) + (tarifa_dia_8 * 7) + (tarifa_dia_15 * (difference - 14)) * quantidade) *1.5
+                        valor_total_armazenagem += (
+                            (tarifa_dia_7) +                  # Tarifa do 7º dia
+                            (tarifa_dia_8 * 7) +              # Tarifa dos dias 8 a 14
+                            (tarifa_dia_15 * (difference - 14)) * quantidade  # Tarifa a partir do 15º dia
+                        ) + valor_extra_armazenagem
+                elif periodo_armazenagem == "4º período":
+                    if difference >= 29:
+                        tarifa_dia_7 = max(0.0055 * valor_do_CIF, 982.50)
+                        tarifa_dia_8 = max(0.0070 * valor_do_CIF, 589.98)
+                        tarifa_dia_15 = max(0.0100 * valor_do_CIF, 865.00)
+                        tarifa_dia_30 = max(0.0110 * valor_do_CIF, 1092.50)
+                        valor_extra_armazenagem += ((tarifa_dia_7) + (tarifa_dia_8 * 7) + (tarifa_dia_15 * 15) + (tarifa_dia_30 * (difference - 28)) * quantidade) * 1.5
+                        valor_total_armazenagem += (
+                            (tarifa_dia_7) +                  # Tarifa do 7º dia
+                            (tarifa_dia_8 * 7) +              # Tarifa dos dias 8 a 14
+                            (tarifa_dia_15 * 15) +            # Tarifa a partir do 15º dia
+                            (tarifa_dia_30 * (difference - 28)) * quantidade  # Tarifa a partir do 29º dia
+                        ) + valor_extra_armazenagem
+                
+                valor_total_geral += valor_total + valor_total_levante + valor_total_armazenagem
+
+                # Exibir os resultados
+                self.result_label.setText(f"Serviços extras: R$ {valor_total:.2f}")
+                self.result_label.setVisible(True)
+
+                if not hasattr(self, 'result_label_levante'):
+                    self.result_label_levante = QLabel()  # Inicializa se não existir
+                self.result_label_levante.setText(f"Levante: R$ {valor_total_levante:.2f}")
+                self.result_label_levante.setVisible(True)
+                if not hasattr(self, 'result_label_armazenagem'):
+                    self.result_label_armazenagem = QLabel()  # Inicializa se não existir
+                self.result_label_armazenagem.setText(f"Armazenagem: R$ {valor_total_armazenagem:.2f}")
+                self.result_label_armazenagem.setVisible(True)
+                if not hasattr(self, 'result_label_total'):
+                    self.result_label_total = QLabel()  # Inicializa se não existir
+                self.result_label_total.setText(f"Total de custos: R$ {valor_total_geral:.2f}")
+                self.result_label_total.setVisible(True)
+
+        elif recinto == "PORTONAVE" and tipo_mercadoria == "REEFER":
+            # Obter a diferença de dias
+            difference = self.entrada_container.date().daysTo(self.saida_container.date())
+            valor_total = 0  # Inicializar o valor total para serviços extras
+            valor_extra = 0
+            valor_total_levante = 0  # Inicializar o valor total para levantes
+            valor_extra_levante = 0
+            valor_total_armazenagem = 0  # Inicializar o valor total para armazenagem
+            valor_extra_armazenagem = 0
+            valor_total_energia = 0
+            valor_total_geral = 0
+
+            # Calcular os serviços extras multiplicando pela quantidade
+            for i in range(len(self.quantidade_container_list)):
+                tipo_conteiner = self.tipo_container_list[i].currentText()
+                quantidade_container = self.quantidade_container_list[i]
+
+                try:
+                    quantidade = int(quantidade_container.text())
+                except ValueError:
+                    quantidade = 1  # Usar valor padrão de 1 se não for um número válido
+
+                valor_extra += (sum(self.selected_options_values.values()) * quantidade) * 1.5 
+                valor_total += (sum(self.selected_options_values.values()) * quantidade) + valor_extra
+
+                if tipo_conteiner == "Normal":
+                    valor_extra_levante += (375.99 * quantidade) * 1.5
+                    valor_total_levante += (375.99 * quantidade) + valor_extra_levante
+                elif tipo_conteiner == "Open Top":
+                    valor_extra_levante += (967.00 * quantidade) * 1.5
+                    valor_total_levante += (967.00 * quantidade) + valor_extra_levante
+                elif tipo_conteiner == "Flat Rack":
+                    valor_extra_levante += (967.00 * quantidade) * 1.5
+                    valor_total_levante += (967.00 * quantidade) + valor_extra_levante
+                elif tipo_conteiner == "Carga solta":
+                    valor_extra_levante += (0.00 * quantidade) * 1.5
+                    valor_total_levante += (0.00 * quantidade) + valor_extra_levante
+
+                # Cálculo do tempo de armazenagem
+                if periodo_armazenagem == "1º período":
+                    if difference == 7:
+                        tarifa = max(0.0022 * valor_do_CIF, 393.00) + 267.00
+                        valor_total_armazenagem += (tarifa * quantidade) #+ valor_extra_armazenagem
+                elif periodo_armazenagem == "2º período":
+                    if 8 <= difference <= 14:
+                        tarifa_dia_7 = max(0.0022 * valor_do_CIF, 393.00) + 267.00
+                        tarifa_dia_8 = max(0.0028 * valor_do_CIF, 235.99) + 267.00
+                        valor_total_armazenagem += (
+                            (tarifa_dia_7 * quantidade) +
+                            (tarifa_dia_8 * (difference - 8 + 1)) * quantidade
+                        )
+                elif periodo_armazenagem == "3º período":
+                    if difference >= 15:
+                        tarifa_dia_7 = max(0.0022 * valor_do_CIF, 393.00) + 267.00
+                        tarifa_dia_8 = max(0.0028 * valor_do_CIF, 235.99) + 267.00
+                        tarifa_dia_15 = max(0.0040 * valor_do_CIF, 346.00) + 267.00
+                        valor_total_armazenagem += (
+                            (tarifa_dia_7) +                  # Tarifa do 7º dia
+                            (tarifa_dia_8 * 7) +              # Tarifa dos dias 8 a 14
+                            (tarifa_dia_15 * (difference - 14)) * quantidade  # Tarifa a partir do 15º dia
+                        )
+                elif periodo_armazenagem == "4º período":
+                    if difference >= 29:
+                        tarifa_dia_7 = max(0.0022 * valor_do_CIF, 393.00) + 267.00
+                        tarifa_dia_8 = max(0.0028 * valor_do_CIF, 235.99) + 267.00
+                        tarifa_dia_15 = max(0.0040 * valor_do_CIF, 346.00) + 267.00
+                        tarifa_dia_30 = max(0.0044 * valor_do_CIF, 437.00) + 267.00
+                        valor_total_armazenagem += (
+                            (tarifa_dia_7) +                  # Tarifa do 7º dia
+                            (tarifa_dia_8 * 7) +              # Tarifa dos dias 8 a 14
+                            (tarifa_dia_15 * 15) +            # Tarifa a partir do 15º dia
+                            (tarifa_dia_30 * (difference - 28)) * quantidade  # Tarifa a partir do 29º dia
+                        ) 
+                
+                # Cálculo do total de monitoramento/energia
+                valor_total_energia = difference * 267.00
+
+                # Cálculo do valor total
+                valor_total_geral += valor_total + valor_total_levante + valor_total_armazenagem + valor_total_energia
+
+                # Exibir os resultados
+                self.result_label.setText(f"Serviços extras: R$ {valor_total:.2f}")
+                self.result_label.setVisible(True)
+
+                if not hasattr(self, 'result_label_levante'):
+                    self.result_label_levante = QLabel()  # Inicializa se não existir
+                self.result_label_levante.setText(f"Levante: R$ {valor_total_levante:.2f}")
+                self.result_label_levante.setVisible(True)
+                if not hasattr(self, 'result_label_armazenagem'):
+                    self.result_label_armazenagem = QLabel()  # Inicializa se não existir
+                self.result_label_armazenagem.setText(f"Armazenagem: R$ {valor_total_armazenagem:.2f}")
+                self.result_label_armazenagem.setVisible(True)
+                if not hasattr(self, 'result_label_energia'):
+                    self.result_label_energia = QLabel()  # Inicializa se não existir
+                self.result_label_energia.setText(f"Energia: R$ {valor_total_energia:.2f}")
+                self.result_label_energia.setVisible(True)
+                if not hasattr(self, 'result_label_total'):
+                    self.result_label_total = QLabel()  # Inicializa se não existir
+                self.result_label_total.setText(f"Total de custos: R$ {valor_total_geral:.2f}")
+                self.result_label_total.setVisible(True)
+        
+        elif recinto == "PORTONAVE" and tipo_mercadoria == "OVERSIZE IMO":
+            # Obter a diferença de dias
+            difference = self.entrada_container.date().daysTo(self.saida_container.date())
+            valor_total = 0  # Inicializar o valor total para serviços extras
+            valor_extra = 0
+            valor_total_levante = 0  # Inicializar o valor total para levantes
+            valor_extra_levante = 0
+            valor_total_armazenagem = 0  # Inicializar o valor total para armazenagem
+            valor_extra_armazenagem = 0
+            valor_total_geral = 0
+
+            # Calcular os serviços extras multiplicando pela quantidade
+            for i in range(len(self.quantidade_container_list)):
+                tipo_conteiner = self.tipo_container_list[i].currentText()
+                quantidade_container = self.quantidade_container_list[i]
+
+                try:
+                    quantidade = int(quantidade_container.text())
+                except ValueError:
+                    quantidade = 1  # Usar valor padrão de 1 se não for um número válido
+
+                valor_extra += (sum(self.selected_options_values.values()) * quantidade) * 3 # Taxa de carga perigosa
+                valor_total += (sum(self.selected_options_values.values()) * quantidade) + valor_extra
+
+                if tipo_conteiner == "Normal":
+                    valor_extra_levante += (375.99 * quantidade) * 3
+                    valor_total_levante += (375.99 * quantidade) + valor_extra_levante
+                elif tipo_conteiner == "Open Top":
+                    valor_extra_levante += (967.00 * quantidade) * 3
+                    valor_total_levante += (967.00 * quantidade) + valor_extra_levante
+                elif tipo_conteiner == "Flat Rack":
+                    valor_extra_levante += (967.00 * quantidade) * 3
+                    valor_total_levante += (967.00 * quantidade) + valor_extra_levante
+                elif tipo_conteiner == "Carga solta":
+                    valor_extra_levante += (0.00 * quantidade) * 3
+                    valor_total_levante += (0.00 * quantidade) + valor_extra_levante
+
+                # Cálculo do tempo de armazenagem
+                if periodo_armazenagem == "1º período":
+                    if difference == 7:
+                        tarifa = max(0.0077 * valor_do_CIF, 1375.50)
+                        valor_extra_armazenagem += (tarifa * quantidade) * 1.5
+                        valor_total_armazenagem += (tarifa * quantidade) + valor_extra_armazenagem
+                elif periodo_armazenagem == "2º período":
+                    if 8 <= difference <= 14:
+                        tarifa_dia_7 = max(0.0077 * valor_do_CIF, 1375.50)
+                        tarifa_dia_8 = max(0.0098 * valor_do_CIF, 825.97)
+                        valor_extra_armazenagem += ((tarifa_dia_7 * quantidade) +(tarifa_dia_8 * (difference - 8 + 1)) * quantidade) * 1.5
+                        valor_total_armazenagem += (
+                            (tarifa_dia_7 * quantidade) +
+                            (tarifa_dia_8 * (difference - 8 + 1)) * quantidade
+                        ) + valor_extra_armazenagem
+                elif periodo_armazenagem == "3º período":
+                    if difference >= 15:
+                        tarifa_dia_7 = max(0.0077 * valor_do_CIF, 1375.50)
+                        tarifa_dia_8 = max(0.0098 * valor_do_CIF, 825.97)
+                        tarifa_dia_15 = max(0.0140 * valor_do_CIF, 1211.00)
+                        valor_extra_armazenagem += ((tarifa_dia_7) + (tarifa_dia_8 * 7) + (tarifa_dia_15 * (difference - 14)) * quantidade) *1.5
+                        valor_total_armazenagem += (
+                            (tarifa_dia_7) +                  # Tarifa do 7º dia
+                            (tarifa_dia_8 * 7) +              # Tarifa dos dias 8 a 14
+                            (tarifa_dia_15 * (difference - 14)) * quantidade  # Tarifa a partir do 15º dia
+                        ) + valor_extra_armazenagem
+                elif periodo_armazenagem == "4º período":
+                    if difference >= 29:
+                        tarifa_dia_7 = max(0.0077 * valor_do_CIF, 1375.50)
+                        tarifa_dia_8 = max(0.0098 * valor_do_CIF, 825.97)
+                        tarifa_dia_15 = max(0.0140 * valor_do_CIF, 1211.00)
+                        tarifa_dia_30 = max(0.0154 * valor_do_CIF, 1529.50)
+                        valor_extra_armazenagem += ((tarifa_dia_7) + (tarifa_dia_8 * 7) + (tarifa_dia_15 * 15) + (tarifa_dia_30 * (difference - 28)) * quantidade) * 1.5
+                        valor_total_armazenagem += (
+                            (tarifa_dia_7) +                  # Tarifa do 7º dia
+                            (tarifa_dia_8 * 7) +              # Tarifa dos dias 8 a 14
+                            (tarifa_dia_15 * 15) +            # Tarifa a partir do 15º dia
+                            (tarifa_dia_30 * (difference - 28)) * quantidade  # Tarifa a partir do 29º dia
+                        ) + valor_extra_armazenagem
+                
+                valor_total_geral += valor_total + valor_total_levante + valor_total_armazenagem
+
+                # Exibir os resultados
+                self.result_label.setText(f"Serviços extras: R$ {valor_total:.2f}")
+                self.result_label.setVisible(True)
+
+                if not hasattr(self, 'result_label_levante'):
+                    self.result_label_levante = QLabel()  # Inicializa se não existir
+                self.result_label_levante.setText(f"Levante: R$ {valor_total_levante:.2f}")
+                self.result_label_levante.setVisible(True)
+                if not hasattr(self, 'result_label_armazenagem'):
+                    self.result_label_armazenagem = QLabel()  # Inicializa se não existir
+                self.result_label_armazenagem.setText(f"Armazenagem: R$ {valor_total_armazenagem:.2f}")
+                self.result_label_armazenagem.setVisible(True)
+                if not hasattr(self, 'result_label_total'):
+                    self.result_label_total = QLabel()  # Inicializa se não existir
+                self.result_label_total.setText(f"Total de custos: R$ {valor_total_geral:.2f}")
+                self.result_label_total.setVisible(True)
         else:
             # Ocultar os valores se as condições não forem atendidas
             self.result_label.setVisible(False)
             if hasattr(self, 'result_label_levante'):
                 self.result_label_levante.setVisible(False)
+            if hasattr(self, 'result_label_armazenagem'):
+                self.result_label_armazenagem.setVisible(False)
+            if hasattr(self, 'result_label_energia'):
+                self.result_label_armazenagem.setVisible(False)
+            if hasattr(self, 'result_label_total'):
+                self.result_label_total.setVisible(False)
 
     def resize_to_full_screen(self):
         screen = QApplication.primaryScreen()
